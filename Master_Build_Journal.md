@@ -199,3 +199,19 @@ If interrupted mid-command: do not assume success; inspect working tree, process
 - TagTeam: PASS pure analyzer and SVG; NOT_RUN full generator/tracking, overall BLOCKED.
 - Outcome / deviations: Historical as-of generation cannot rely on naive ingestion timestamps; read-only loader is descriptive only. No live historical distribution or ten-ticket cycle emitted, no tracking change, no release authorization.
 - Next action / owner: Owner decision ADR-0007/0008 and control uniqueness vs independence; subsequent design/review gate before implementing operational generator or integration.
+
+### EVENT-0005 — Scoped change synchronized, handoff
+- Timestamp (UTC): 2026-10-29T22:18:12Z
+- Actor / role: Hermes implementer
+- WORK-ID: WORK-0005
+- Phase / gate: POST_VERIFY / HANDOFF
+- Status: VERIFIED for isolated analytical slice; BLOCKED for full project
+- Intent / decision context: Preserve exact sync state and handoff after audited scoped commit.
+- Authorized scope / approval: Project repository main only; production app and ledger unchanged.
+- Baseline: Commit 074da1838b45f0467c235cfad5f685981c622c29 pushed and independently verified by git ls-remote refs/heads/main; clean worktree before this handoff entry.
+- Action: Staged only 22 scoped files; staged diff checked; secret pattern scan 0 hits; ruff/black/pytest passed; committed and pushed to origin/main.
+- Targets / side effects: GitHub RobbyMo81/PlinkoPBMachine main; no operational release. Journal backup made before this append.
+- Evidence: git ls-remote hash 074da1838b45f0467c235cfad5f685981c622c29; CLEAN_ROOM_TEST_REPORT.md and TAGTEAM_VERIFICATION_REPORT.md.
+- TagTeam: PASS scoped analyzer only; production integration BLOCKED.
+- Outcome / deviations: All project-specific code is isolated, no nine-plus-one portfolio exists. Explicit owner design approval still required for operational rules; no assumed decision from uninterrupted work request.
+- Next action / owner: Human owner decides ADR-0007/0008 and control collision/independence contract; agent then designs/implements generator only after new gate.
