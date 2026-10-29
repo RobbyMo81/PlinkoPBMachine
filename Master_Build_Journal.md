@@ -14,17 +14,17 @@
 
 | Field | Current value |
 |---|---|
-| Phase | Pre-investigation / policy adoption |
-| Latest verified baseline | Not yet established |
-| Repository / working directory | Unknown — discovery required |
-| Production system status | Unknown — do not infer |
-| Clean room | Not yet created or verified |
-| Existing tracking integration | Preserve as-is; source interfaces not yet inspected |
-| TagTeam availability | Not verified |
+| Phase | Pure analyzer verified; operational generator blocked |
+| Latest verified baseline | Plinko repo bb6ade8; reference DB/ledger/CLI SHA256 in EVENT-0003; unchanged at 2026-10-29T22:13:24Z |
+| Repository / working directory | C:/Users/RobMo/PlinkoPBMachine |
+| Production system status | Read-only reference inspected; no production changes by this work |
+| Clean room | Separate repo and locked local venv; behavioral SQLite read-only negative test passed; OS ACL isolation not proven |
+| Existing tracking integration | Unchanged, not yet regression-tested with new engine |
+| TagTeam availability | Codex CLI read-only reviews: pure analytics PASS; operational release BLOCKED |
 | Last approved release | None recorded in this journal |
-| Active work | `WORK-0001` — investigate and establish clean room |
-| Next gate | DISCOVER (read-only), then BASELINE and ISOLATE |
-| Blocking conditions | No repository evidence; no isolation test; no human-approved allocation/tie details |
+| Active work | WORK-0005 pure analytical slice PASS; WORK-0003 operational rule approval OPEN |
+| Next gate | Owner resolves ADR-0007/0008 and control collision rule, then new design/verification gate |
+| Blocking conditions | No approved bin/allocation/shortage rules, historical as-of provenance or production integration authorization |
 
 **Agent startup procedure:** Read Sections 1–7 and the latest event entries; check policy and repository state; confirm journal continuity; acquire write lock; add a session-start event; only then perform authorized work. Reconcile any discrepancy before modifying files.
 
@@ -46,10 +46,11 @@
 
 | WORK-ID | Title | Owner | Phase | State | Scope | Next action |
 |---|---|---|---|---|---|---|
-| WORK-0001 | Discover current app and validate clean-room boundary | Unassigned | DISCOVER | PROPOSED | Read-only architecture/source/config inspection | Assign agent, confirm scope and record baseline |
-| WORK-0002 | Verify TagTeam mechanism | Unassigned | DISCOVER | PROPOSED | Existing verifier integration only | Identify actual TagTeam tools/roles and independence |
-| WORK-0003 | Resolve experimental allocation and sum-bin tie rules | Human owner + design agent | DESIGN | OPEN_DECISION | Nine-draw generator only | Propose exact rules with examples for approval |
-| WORK-0004 | Baseline current tracking contract | Unassigned | BASELINE | PROPOSED | Existing persistence/scoring/reporting | Capture data contracts and regression tests |
+| WORK-0001 | Discover current app and validate clean-room boundary | Hermes | DISCOVER | VERIFIED (behavioral only; ACL isolation unproven) | Read-only architecture/source/config inspection | See EVENT-0003; enforce stronger isolation before operational use |
+| WORK-0002 | Verify TagTeam mechanism | Hermes / Codex | DESIGN | VERIFIED (scoped) | Read-only independent reviews | See TAGTEAM_VERIFICATION_REPORT.md |
+| WORK-0003 | Resolve experimental allocation and sum-bin tie rules | Human owner + design agent | DESIGN | OPEN_DECISION | Nine-draw generator only | Approve exact rules and control collision priority before generation |
+| WORK-0004 | Baseline current tracking contract | Hermes | BASELINE | IN_REVIEW | Existing persistence/scoring/reporting | Source/schema mapped, regression testing deferred |
+| WORK-0005 | Build pure descriptive six-ball analyzer | Hermes / Codex | TEST | VERIFIED (scoped) | Isolated code/tests/fixture visualization | See EVENT-0004; no production release |
 
 **State vocabulary:** `PROPOSED`, `AUTHORIZED`, `IN_PROGRESS`, `BLOCKED`, `IN_REVIEW`, `VERIFIED`, `APPROVED`, `DEPLOYED`, `CLOSED`, `REJECTED`, `ROLLED_BACK`.
 
@@ -148,3 +149,53 @@ If interrupted mid-command: do not assume success; inspect working tree, process
 | Post-release / closeout | Pending | NOT_RUN | N/A | BLOCKED |
 
 **Definition of done:** Approved scope completed, reproducible tests pass, independent TagTeam signs off, production/tracking state is preserved, the release is human approved (when applicable), rollback evidence exists, and every decision/change/outcome is linked from this journal.
+
+---
+
+### EVENT-0002 — Scoped rebuild authorized and discovery started
+- Timestamp (UTC): 2026-10-29T22:00:34Z
+- Actor / role: Hermes / implementer
+- WORK-ID: WORK-0001, WORK-0002, WORK-0004
+- Phase / gate: DISCOVER
+- Status: IN_PROGRESS
+- Intent / decision context: Owner requested uninterrupted build following Instruction.md; operational production writes remain outside scope and unresolved ADR-0007/0008 remain open.
+- Authorized scope / approval: User message authorizes work in PlinkoPBMachine; read-only inspection of OneDrive/Documents/PowerBall reference; no production mutation.
+- Baseline: Plinko repo bb6ade8b6a8a4a79cbea478e1691162b36006194, clean at startup. Journal prewrite SHA256 054e54a5078083508e788b245f7fb3eaa3d14e88df6fc6d77eba5ee27ea3357f; backup backups/journal/Master_Build_Journal.md.bak.20261029T2200*. Production app is not its own Git repo; home-directory repository shadowing observed.
+- Action: Read governing documents, discover production path and Git state, create timestamped journal backup; begin scoped read-only architecture/baseline inspection and TagTeam preflight.
+- Targets / side effects: This journal and local backup only; no reference app writes.
+- Evidence: Instruction.md, Clean_Room_Policy.md, git status output, production directory listing.
+- TagTeam: Pending independent review.
+- Outcome / deviations: Production Git commit cannot be attributed to the app itself; must hash individual source/data inputs instead.
+- Next action / owner: Hermes — map reference contracts and establish clean-room design gate.
+
+### EVENT-0003 — Scoped analyzer design accepted for isolated implementation
+- Timestamp (UTC): 2026-10-29T22:06:05Z
+- Actor / role: Hermes implementer; Codex CLI read-only independent design reviewer
+- WORK-ID: WORK-0001, WORK-0002, WORK-0004, WORK-0005 (new: pure analyzer)
+- Phase / gate: DESIGN / ISOLATE
+- Status: PASS for pure analyzer and isolated fixtures ONLY; BLOCKED for operational generator and production integration
+- Intent / decision context: Remediate first review's BLOCKED findings without inventing owner rules ADR-0007/0008.
+- Authorized scope / approval: New source/tests/docs exclusively in PlinkoPBMachine; reference app remains read-only, no production DB or code execution.
+- Baseline: Root commit bb6ade8; authoritative DB SHA256 f216b236b92fef5f0dead715cd7ae30213bd9473fe47abd5311585c69a9cd430; ledger SHA256 a70432d4d31eaaa928ff9dfa04650d467530789efac55ea4cef1b9a678496e3c. Source CLI SHA256 1a62fe8b8e33ecccb4476bf7437eec8f621fffa7eedfda18642d96e4a5a9af02.
+- Action: Created investigation, architecture, dependency, design, plan and CLI manifest; negative-test INSERT to disposable SQLite via mode=ro failed as expected; read-only Codex first design verdict BLOCKED, second verdict PASS for pure analyzer only.
+- Targets / side effects: Project docs and disposable temp DB; no reference mutations; journal backup saved in backups/journal.
+- Evidence: INVESTIGATION_REPORT.md, DESIGN_VERIFICATION.md, IMPLEMENTATION_PLAN.md; reviewer log C:/Users/RobMo/AppData/Local/Temp/plinko-design-review.log; Python 3.14.7, uv 0.12.5, ruff 0.16.0, black 26.5.1.
+- TagTeam: PASS scoped design / BLOCKED operational generation.
+- Outcome / deviations: Reference has six pre-2015-10-07 rows and many naive ingested_at timestamps; descriptive analysis may read current snapshot, historical backtest availability cannot be asserted from it. Filesystem ACL isolation is not established; URI negative test is behavioral, not OS enforcement.
+- Next action / owner: Hermes — write failing isolated tests, implement only pure analyzer, test/review; keep production blocked.
+
+### EVENT-0004 — Clean-room analysis slice verified; operational build blocked
+- Timestamp (UTC): 2026-10-29T22:16:50Z
+- Actor / role: Hermes implementer; Codex CLI independent read-only reviewer
+- WORK-ID: WORK-0005
+- Phase / gate: IMPLEMENT / TEST / TAGTEAM_VERIFY
+- Status: PASS for analytical core; BLOCKED for operational generator and integration
+- Intent / decision context: Build tested six-ball distribution and observational WB/PB analysis without filling unresolved experimental rules.
+- Authorized scope / approval: Isolated PlinkoPBMachine new code/tests/fixture SVG only; no production write or existing tracker execution.
+- Baseline: bb6ade8; reference DB/ledger/CLI hashes unchanged at 22:13:24Z. Current source SHA256 b24bb861e4e95c10444eb8244171219b70fee5ac7dd6b39728ee4212a77b1189.
+- Action: TDD pure analyzer, read-only SQLite adapter, immutable traceable result, full PB/WB frequency and SVG; uv lock/sync, independent code review/rework and follow-up review; generated synthetic fixture SVG.
+- Targets / side effects: New project files and local `.venv`, artifact hash ef5583e7876a41fd0da1f656832fc11226a79a0d6409475c644aad1e58ce9aa5; no reference mutations. Journal backed up before append.
+- Evidence: CLEAN_ROOM_TEST_REPORT.md (ruff PASS, black PASS, pytest 11 PASS), TAGTEAM_VERIFICATION_REPORT.md (reviewer FAIL→corrected PASS), CHANGE_AUDIT.md, ROLLBACK_PLAN.md.
+- TagTeam: PASS pure analyzer and SVG; NOT_RUN full generator/tracking, overall BLOCKED.
+- Outcome / deviations: Historical as-of generation cannot rely on naive ingestion timestamps; read-only loader is descriptive only. No live historical distribution or ten-ticket cycle emitted, no tracking change, no release authorization.
+- Next action / owner: Owner decision ADR-0007/0008 and control uniqueness vs independence; subsequent design/review gate before implementing operational generator or integration.

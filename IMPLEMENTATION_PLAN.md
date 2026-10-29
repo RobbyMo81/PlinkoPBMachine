@@ -1,0 +1,7 @@
+# Implementation plan — isolated analytical slice
+
+1. Establish separate local repo as clean room; ignore `.venv/`, caches and all DB files. Record source hashes, executable paths, fixture/test baseline, and verify read-only SQLite URI rejects INSERT on a disposable sentinel DB. Source directory is NOT OS-sandboxed; operational production run remains blocked.
+2. Write failing unittest fixtures for exact six-ball sums (16, 361), validation/duplicate IDs and dates, 26-wide PB bins, 10th-boundary ties, sparse bins, WB parity/set conservation, 2015-era exclusion, repeatable row hash, and read-only loading. Independent expected counts are handwritten fixtures, not analyzer outputs.
+3. Implement pure analyzer and read-only SQLite loader under `plinko/`. No reference imports, ledger writes, random ticket generator, HTTP, or CLI that can mutate production. Snapshot identifier is SHA256 of canonical validated input rows, not the mutable SQLite file hash.
+4. Test against isolated fixtures. Optionally inspect live authoritative DB read-only for a descriptive snapshot (not a historical backtest) and cross-check independent SQL counts. Verify before/after SHA256 of both reference DBs.
+5. Independent TagTeam review of code and math; fix verified findings. Run declared lint/format/tests; record audit, review, rollback, outstanding gates in journal. No production integration or push unless separately decided.
