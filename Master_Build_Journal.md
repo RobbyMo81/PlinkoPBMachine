@@ -22,7 +22,7 @@
 | Existing tracking integration | Unchanged, not yet regression-tested with new engine |
 | TagTeam availability | Codex CLI read-only reviews: pure analytics PASS; operational release BLOCKED |
 | Last approved release | None recorded in this journal |
-| Active work | WORK-0005 pure analytical slice PASS; WORK-0003 operational rule approval OPEN |
+| Active work | WORK-0005 pure analytical slice PASS; WORK-0006 real-data snapshot analysis PASS; WORK-0003 operational rule approval OPEN |
 | Next gate | Owner resolves ADR-0007/0008 and control collision rule, then new design/verification gate |
 | Blocking conditions | No approved bin/allocation/shortage rules, historical as-of provenance or production integration authorization |
 
@@ -51,6 +51,7 @@
 | WORK-0003 | Resolve experimental allocation and sum-bin tie rules | Human owner + design agent | DESIGN | OPEN_DECISION | Nine-draw generator only | Approve exact rules and control collision priority before generation |
 | WORK-0004 | Baseline current tracking contract | Hermes | BASELINE | IN_REVIEW | Existing persistence/scoring/reporting | Source/schema mapped, regression testing deferred |
 | WORK-0005 | Build pure descriptive six-ball analyzer | Hermes / Codex | TEST | VERIFIED (scoped) | Isolated code/tests/fixture visualization | See EVENT-0004; no production release |
+| WORK-0006 | Analyze canonical dataset from isolated read-only snapshot | Hermes / Codex | TEST | VERIFIED (scoped) | Source SQLite read-only; derived SVG/report in project | See EVENT-0007; no generation |
 
 **State vocabulary:** `PROPOSED`, `AUTHORIZED`, `IN_PROGRESS`, `BLOCKED`, `IN_REVIEW`, `VERIFIED`, `APPROVED`, `DEPLOYED`, `CLOSED`, `REJECTED`, `ROLLED_BACK`.
 
@@ -215,3 +216,35 @@ If interrupted mid-command: do not assume success; inspect working tree, process
 - TagTeam: PASS scoped analyzer only; production integration BLOCKED.
 - Outcome / deviations: All project-specific code is isolated, no nine-plus-one portfolio exists. Explicit owner design approval still required for operational rules; no assumed decision from uninterrupted work request.
 - Next action / owner: Human owner decides ADR-0007/0008 and control collision/independence contract; agent then designs/implements generator only after new gate.
+
+### EVENT-0006 — Canonical dataset snapshot analysis requested
+- Timestamp (UTC): 2026-10-29T22:25:46Z
+- Actor / role: Hermes implementer
+- WORK-ID: WORK-0006 (new: read-only canonical-data analysis)
+- Phase / gate: BASELINE / TEST
+- Status: IN_PROGRESS
+- Intent / decision context: Owner clarified canonical datasets reside in C:/Users/RobMo/OneDrive/Documents/PowerBall; evaluate scoped analyzer on real immutable local snapshot instead of only fixtures.
+- Authorized scope / approval: Read-only source SQLite unified_storage.db; write only isolated PlinkoPBMachine .cache snapshot and derived reports; no production writes, no pick ledger use or 9+1 generation.
+- Baseline: Plinko commit ee8318d86f03dd2fd10d86e4b271c56b70a8361c; source DB SHA256 f216b236b92fef5f0dead715cd7ae30213bd9473fe47abd5311585c69a9cd430, 1,432 rows, quick_check ok, journal mode delete. Generated-picks ledger SHA256 now db777fcc480d3e5f0ad717aecedf11215049f826773dd44b8a59d124cc588e44, changed independently since prior snapshot; leave untouched.
+- Action: Preflight URI mode=ro source, verify integrity and known schema; plan read-only SQLite backup to isolated .cache database, run analyzer and independent SQL count reconciliation; verify source hash after operation.
+- Targets / side effects: Only local journal backup and future .cache snapshot/reports; no reference writes.
+- Evidence: terminal hash/schema/quick_check, source AGENTS.md identifying canonical unified_storage.db; separate project working tree clean.
+- TagTeam: Prior scoped analyzer review PASS; real-data comparison pending.
+- Outcome / deviations: Live ledger changed autonomously; cannot claim it remained unchanged across sessions.
+- Next action / owner: Hermes — snapshot and analyze current-era draws, record measured results and verifications.
+
+### EVENT-0007 — Canonical snapshot analyzed and independently reconciled
+- Timestamp (UTC): 2026-10-29T22:27:39Z
+- Actor / role: Hermes implementer; Codex CLI read-only verifier
+- WORK-ID: WORK-0006
+- Phase / gate: TEST / TAGTEAM_VERIFY
+- Status: PASS for descriptive canonical-data analysis; operational generation still BLOCKED
+- Intent / decision context: Validate scoped code against actual canonical PowerBall history without production mutation.
+- Authorized scope / approval: Source DB read-only; `.cache/canonical_snapshot.db` isolated, ignored; derived distribution SVG and report in project.
+- Baseline: Source DB SHA256 f216b236b92fef5f0dead715cd7ae30213bd9473fe47abd5311585c69a9cd430 unchanged; snapshot SHA256 a40e67ec589062d2799494906213179ef8a650af4537b972ec29364556de9fa6. Ledger SHA256 db777fcc480d3e5f0ad717aecedf11215049f826773dd44b8a59d124cc588e44 was checked after run; no ledger access by analyzer.
+- Action: SQLite `mode=ro` backup to isolated .cache; analyzer consumed local snapshot; computed six-ball bins, PB/WB conservation, in-memory SVG; direct SQL independent review. First reporting command failed after counts due relative `Path.as_uri`, reran with resolved path.
+- Targets / side effects: Local .cache snapshot, artifacts/canonical_distribution.svg SHA256 a306e3091e3bc26a2d433257738a4bbf6e55d6985c0d1c1a9a1e5f7d35f71801, CANONICAL_DATASET_ANALYSIS.md, .gitignore; no reference writes.
+- Evidence: CANONICAL_DATASET_ANALYSIS.md and reviewer log C:/Users/RobMo/AppData/Local/Temp/plinko-data-review.log; ruff PASS, black PASS, pytest 11 PASS.
+- TagTeam: PASS independent SQL: 1,432 rows, 1,426 modern and six excluded; 214 bins, S=190 peak at 20; 214 PB and 1,197 WB group reconciliations with 0 mismatches.
+- Outcome / deviations: Real data validated. Snapshot is descriptive, not historical as-of nor a predictive advantage; user-approved operational rules and integration still absent.
+- Next action / owner: Retain isolated real-data report; owner ADR-0007/0008 before 9+1 generation.
