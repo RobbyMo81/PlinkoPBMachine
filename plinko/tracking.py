@@ -162,29 +162,31 @@ def read_pb_metrics(ledger_path: Path, *, workspace_root: Path) -> dict:
         complete = pending = incomplete = mismatched = duplicate = 0
         coverage_hits = experimental_hits = control_hits = 0
         baseline_sum = 0.0
-        targets = Counter(
-            json.loads(batch["strategy_json"]).get("target_date")
-            for batch in batches
-            if conn.execute(
-                "SELECT COUNT(*) FROM generated_picks WHERE batch_id=?", (batch["id"],)
-            ).fetchone()[0]
-            == 10
-        )
+        cycles = []
+        targets = Counter()
         for batch in batches:
             picks = conn.execute(
                 "SELECT * FROM generated_picks WHERE batch_id=? ORDER BY source_row", (batch["id"],)
             ).fetchall()
-            if (
-                len(picks) != 10
-                or [p["source_row"] for p in picks] != list(range(1, 11))
-                or any(
-                    p["pick_type"] != ("plinko_experimental" if i < 9 else "plinko_control")
+            valid_shape = (
+                len(picks) == 10
+                and [p["source_row"] for p in picks] == list(range(1, 11))
+                and all(
+                    p["pick_type"] == ("plinko_experimental" if i < 9 else "plinko_control")
                     for i, p in enumerate(picks)
                 )
+            )
+            strategy = json.loads(batch["strategy_json"]) if valid_shape else None
+            if strategy is not None and all(
+                json.loads(p["metadata_json"]).get("target_date") == strategy["target_date"]
+                for p in picks
             ):
+                targets[strategy["target_date"]] += 1
+            cycles.append((batch, picks, strategy))
+        for batch, picks, strategy in cycles:
+            if strategy is None:
                 incomplete += 1
                 continue
-            strategy = json.loads(batch["strategy_json"])
             target = strategy["target_date"]
             if targets[target] > 1:
                 duplicate += 1

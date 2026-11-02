@@ -124,6 +124,50 @@ def test_incomplete_batch_and_wrong_target_are_excluded(tmp_path):
     assert result["evaluated_cycles"] == 0 and result["mismatched_cycles"] >= 1
 
 
+def test_malformed_cycle_does_not_shadow_valid_cycle_for_same_draw(tmp_path):
+    storage = reference_storage(tmp_path)
+    analysis, portfolio, snapshot, draws = fixture(tmp_path)
+    for cycle in ("valid", "malformed"):
+        persist_cycle(
+            portfolio, analysis, snapshot, storage, workspace_root=tmp_path, cycle_id=cycle
+        )
+    with storage._connect() as connection:
+        connection.execute(
+            "UPDATE generated_picks SET source_row=11 "
+            "WHERE batch_id='malformed' AND source_row=10"
+        )
+    storage.evaluate_against_draws(str(draws))
+    metrics = read_pb_metrics(storage.storage_path, workspace_root=tmp_path)
+    assert metrics["incomplete_cycles"] == 1
+    assert metrics["duplicate_target_cycles"] == 0
+    assert metrics["evaluated_cycles"] == 1
+
+
+def test_mismatched_cycle_does_not_shadow_valid_cycle_for_same_draw(tmp_path):
+    storage = reference_storage(tmp_path)
+    analysis, portfolio, snapshot, draws = fixture(tmp_path)
+    for cycle in ("valid", "mismatched"):
+        persist_cycle(
+            portfolio, analysis, snapshot, storage, workspace_root=tmp_path, cycle_id=cycle
+        )
+    with storage._connect() as connection:
+        row = connection.execute(
+            "SELECT id, metadata_json FROM generated_picks "
+            "WHERE batch_id='mismatched' AND source_row=10"
+        ).fetchone()
+        metadata = json.loads(row["metadata_json"])
+        metadata["target_date"] = "2026-10-17"
+        connection.execute(
+            "UPDATE generated_picks SET metadata_json=? WHERE id=?",
+            (json.dumps(metadata), row["id"]),
+        )
+    storage.evaluate_against_draws(str(draws))
+    metrics = read_pb_metrics(storage.storage_path, workspace_root=tmp_path)
+    assert metrics["mismatched_cycles"] == 1
+    assert metrics["duplicate_target_cycles"] == 0
+    assert metrics["evaluated_cycles"] == 1
+
+
 def test_snapshot_mismatch_rejected_before_ledger_write(tmp_path):
     storage = reference_storage(tmp_path)
     analysis, portfolio, snapshot, _ = fixture(tmp_path)
