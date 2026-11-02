@@ -14,17 +14,17 @@
 
 | Field | Current value |
 |---|---|
-| Phase | Pure analyzer verified; operational generator blocked |
-| Latest verified baseline | Plinko repo bb6ade8; reference DB/ledger/CLI SHA256 in EVENT-0003; unchanged at 2026-10-29T22:13:24Z |
+| Phase | Clean-room 3×3 engine and isolated tracker verified locally; independent executable gate blocked |
+| Latest verified baseline | Repo HEAD 0e1ba03; WORK-0007 uncommitted code/test changes; 25 pytest PASS, ruff/black PASS; isolated cycle in EVENT-0010 |
 | Repository / working directory | C:/Users/RobMo/PlinkoPBMachine |
-| Production system status | Read-only reference inspected; no production changes by this work |
-| Clean room | Separate repo and locked local venv; behavioral SQLite read-only negative test passed; OS ACL isolation not proven |
-| Existing tracking integration | Unchanged, not yet regression-tested with new engine |
-| TagTeam availability | Codex CLI read-only reviews: pure analytics PASS; operational release BLOCKED |
+| Production system status | Reference source read-only; no production app, ledger or scheduler writes by this work |
+| Clean room | Separate repo and locked local venv; behavioral SQLite read-only checks; OS ACL isolation not proven |
+| Existing tracking integration | Public storage API exercised against isolated copied tracker, no production wiring |
+| TagTeam availability | Codex CLI read-only review: remediation PASS by inspection; full independent executable gate BLOCKED |
 | Last approved release | None recorded in this journal |
-| Active work | WORK-0005 pure analytical slice PASS; WORK-0006 real-data snapshot analysis PASS; WORK-0003 operational rule approval OPEN |
-| Next gate | Owner resolves ADR-0007/0008 and control collision rule, then new design/verification gate |
-| Blocking conditions | No approved bin/allocation/shortage rules, historical as-of provenance or production integration authorization |
+| Active work | WORK-0007 isolated pending cycle 2026-10-31; WORK-0003 prior choices superseded by ADR-0009, release approval OPEN |
+| Next gate | Independent executable verification; explicit human release approval before production integration |
+| Blocking conditions | No official future outcome yet; independent executable review/OS ACL isolation/production approval pending |
 
 **Agent startup procedure:** Read Sections 1–7 and the latest event entries; check policy and repository state; confirm journal continuity; acquire write lock; add a session-start event; only then perform authorized work. Reconcile any discrepancy before modifying files.
 
@@ -52,6 +52,7 @@
 | WORK-0004 | Baseline current tracking contract | Hermes | BASELINE | IN_REVIEW | Existing persistence/scoring/reporting | Source/schema mapped, regression testing deferred |
 | WORK-0005 | Build pure descriptive six-ball analyzer | Hermes / Codex | TEST | VERIFIED (scoped) | Isolated code/tests/fixture visualization | See EVENT-0004; no production release |
 | WORK-0006 | Analyze canonical dataset from isolated read-only snapshot | Hermes / Codex | TEST | VERIFIED (scoped) | Source SQLite read-only; derived SVG/report in project | See EVENT-0007; no generation |
+| WORK-0007 | Revised 3×3 clean-room experimental engine | Hermes / Codex | TAGTEAM_VERIFY | IN_REVIEW (local tests PASS; independent executable verification BLOCKED) | Isolated source, snapshots and copied tracker only | See EVENT-0010; production release remains blocked |
 
 **State vocabulary:** `PROPOSED`, `AUTHORIZED`, `IN_PROGRESS`, `BLOCKED`, `IN_REVIEW`, `VERIFIED`, `APPROVED`, `DEPLOYED`, `CLOSED`, `REJECTED`, `ROLLED_BACK`.
 
@@ -65,8 +66,9 @@
 | ADR-0004 | Nine experimental sets plus one independent random control | AGREED — conceptual | Longitudinal comparison; existing tracking reused | Implementation pending |
 | ADR-0005 | Clean Room work and independent TagTeam verification required | AGREED — policy target | Preserve production and independent confidence | Policy adoption and enforcement pending |
 | ADR-0006 | Master Build Journal is canonical agent application memory | AGREED — policy target | Recoverable decisions, operations and audit history | Policy adoption and enforcement pending |
-| ADR-0007 | Exact nine-set allocation among selected sum bins | OPEN | Observed-frequency weighting may allocate zero to tails; owner intent requires clarification/approval | No rule approved |
-| ADR-0008 | Handling tied/empty/rare outer sum bins and candidate shortages | OPEN | Avoid arbitrary choice, invalid or duplicate combinations | No rule approved |
+| ADR-0007 | Exact nine-set allocation among selected sum bins | SUPERSEDED by ADR-0009 | Earlier tail allocation ambiguity resolved by new owner instruction | EVENT-0008/0009 |
+| ADR-0008 | Handling tied/empty/rare outer sum bins and candidate shortages | SUPERSEDED by ADR-0009 | Earlier tail-bin concept replaced; preserve history | EVENT-0009; owner revised Instruction.md |
+| ADR-0009 | Three frequency/official-recency top sums × three nested PBs, provisional uniform exact-sum WB with overlap rejection; independent control keeps collisions | APPROVED for clean-room build only | No tail allocation; bounded search fails closed; 3×3 ranking from latest dataset | User revised Instruction.md; EVENT-0008/0009; production approval absent |
 
 **Decision process:** Open ADR with options/impact, obtain TagTeam assessment and human approval when policy/theory behavior changes; append an event identifying the adopted decision. Do not silently revise past entries.
 
@@ -248,3 +250,67 @@ If interrupted mid-command: do not assume success; inspect working tree, process
 - TagTeam: PASS independent SQL: 1,432 rows, 1,426 modern and six excluded; 214 bins, S=190 peak at 20; 214 PB and 1,197 WB group reconciliations with 0 mismatches.
 - Outcome / deviations: Real data validated. Snapshot is descriptive, not historical as-of nor a predictive advantage; user-approved operational rules and integration still absent.
 - Next action / owner: Retain isolated real-data report; owner ADR-0007/0008 before 9+1 generation.
+
+### EVENT-0008 — New implementation directive reconciled, clean-room build begun
+- Timestamp (UTC): 2026-10-30T05:02:52Z
+- Actor / role: Hermes implementer
+- WORK-ID: WORK-0007 (new: approved 3×3 PB hit-rate experiment)
+- Phase / gate: DISCOVER / DESIGN
+- Status: IN_PROGRESS; operational production release remains BLOCKED
+- Intent / decision context: User instructed reading this journal first, then implementing the revised Instruction.md. Its approved 3 top sums × 3 top PBs, provisional unbiased WB construction and preserve-on-collision control supersede the earlier tail-bin allocation and collision decisions. Prior ADR-0007/0008 remain historical; new ADR-0009 is the controlling clean-room policy, not retroactively approved earlier entries.
+- Authorized scope / approval: User-provided modified Instruction.md SHA256 ea493bdc345e66d255a3be5fed09401f10ea50ffabb9c636df78bbcfcdfc676f; clean-room repo only. No production source/DB mutations or live lottery orders; production integration still requires explicit separate approval.
+- Baseline: Plinko commit 0e1ba03; journal prewrite SHA256 bd8412d388f358bcaa01cdf4c5db7cf73e1a8584648932d53a8186564db74fb3; backup in backups/journal. Canonical DB SHA256 a37f94f296c4b13e026879412b1fa340e1a7454c8ef74a6f32b53e22d127ab5d (changed since EVENT-0007); ledger SHA256 db777fcc480d3e5f0ad717aecedf11215049f826773dd44b8a59d124cc588e44.
+- Action: Read full journal before other project content, then revised directive, diff and repository status. Proceed with fresh read-only investigation/design review before code.
+- Targets / side effects: This journal and backup only; no reference application writes.
+- Evidence: Instruction.md sections 4–14, git diff and SHA256 outputs.
+- TagTeam: Gate 0 new directive review pending; prior reviewer PASS is scoped to older analytics only.
+- Outcome / deviations: Existing journal checkpoint and proposal describe superseded tail algorithm; retain history, update derived state and design docs after verification.
+- Next action / owner: Hermes — verify reference tracking APIs, define isolated experiment and unbiased sampling contract, submit design to independent reviewer.
+
+### EVENT-0009 — Revised 3×3 design Gate 0 PASS, production gate BLOCKED
+- Timestamp (UTC): 2026-10-30T05:04:48Z
+- Actor / role: Hermes implementer; independent Codex CLI read-only reviewer
+- WORK-ID: WORK-0007
+- Phase / gate: DESIGN / TAGTEAM_VERIFY
+- Status: PASS for clean-room implementation, BLOCKED for production release
+- Intent / decision context: Supersede ADR-0007/0008 with ADR-0009 (new directive: frequency/official-date recency top three sums, three PBs each, 3×3 assignments; independent control collision preserved). Keep historical decisions visible.
+- Authorized scope / approval: User-revised Instruction.md permits clean-room implementation; no production write target approved.
+- Baseline: Reference tracker source SHA256 51d9a2c75eb76b33a22d57c39959fc08317987455970f6b74b39904e989d18de; generator SHA256 8fb81271c6a0ec7d39fd751fd7c9bb9e6793603045702049eea8a819e0c96250.
+- Action: Examined reference storage/evaluation contract and current generator; wrote CURRENT_IMPLEMENTATION_PLAN.md with unbiased exact-sum DP sampling/rejection; reviewed with independent Codex. Existing hot/neutral/cold `get_balanced_pick` is not unbiased under new constraints; no reference imports will execute against production ledger.
+- Targets / side effects: Documentation only in clean-room repo; no reference writes.
+- Evidence: CURRENT_IMPLEMENTATION_PLAN.md; reviewer log C:/Users/RobMo/AppData/Local/Temp/plinko-gate0-review.log.
+- TagTeam: Gate 0 PASS scoped implementation with required fixes (SEARCH_EXHAUSTED vs UNSATISFIABLE, target-date validation, partial batch rejection, prospective cutoff, explicit denominators); production BLOCKED.
+- Outcome / deviations: New design is approved by user for development; owner production release remains separate. WB Hot/Neutral/Cold left descriptive/unavailable without approved pair-specific thresholds.
+- Next action / owner: Hermes — write failing tests and implement ranking, generation, isolated tracking and metrics incrementally.
+
+### EVENT-0011 — Owner defers experiment; revisit plan recorded
+- Timestamp (UTC): 2026-10-31T03:05:00Z
+- Actor / role: Hermes implementer (owner instruction "save this thought so that we can revisit this later")
+- WORK-ID: WORK-0007
+- Phase / gate: POST_VERIFY / HANDOFF
+- Status: DEFERRED BY OWNER; no implementation, verification, or release action taken
+- Intent / decision context: Owner reviewed the WORK-0007 verdict (sound measurement instrument; honest expectation is the null; duplicate-PB coverage cost noted) and chose to save the assessment for later rather than proceed to the next gate now.
+- Authorized scope / approval: Journal append and REVISIT_PLAN.md creation only; no code, ledger, production, or scheduler changes.
+- Baseline: HEAD 0e1ba03 unchanged; journal prewrite backup backups/journal/Master_Build_Journal.md.bak.20261031T030205Z; pending isolated cycle WORK-0007-20261030T051624 still awaiting draw 2026-10-31.
+- Action: Computed statistical-power thresholds for the PB hit-rate comparison (two-proportion, 95%/80%: 2x edge detectable in ~64 draws, 1.5x in ~216 draws, 1.2x in ~1,330 draws; 1-year null expectation 54 assignment-hits, SD 7.2) and recorded REVISIT_PLAN.md with triggers, standing verdicts, and blocked gates.
+- Targets / side effects: REVISIT_PLAN.md (new); this journal append. No reference writes.
+- Evidence: REVISIT_PLAN.md; scratch/plinko_revisit_power.py execution output (preserved in REVISIT_PLAN.md power table).
+- TagTeam: N/A — no implementation claim to verify; prior gate states unchanged (executable-verification and production gates remain BLOCKED/OPEN).
+- Outcome / deviations: The experiment is paused at the owner's request, not abandoned; the pending 2026-10-31 cycle remains in the isolated ledger untouched. Next evaluation opportunity is after the official draw.
+- Next action / owner: On revisit (triggers listed in REVISIT_PLAN.md): evaluate pending cycle after draw, run formal two-proportion test at ~64 draws, or proceed to executable-verification gate if owner unblocks the reviewer environment.
+
+### EVENT-0010 — Revised build implemented, isolated smoke and verifier findings
+- Timestamp (UTC): 2026-10-30T05:18:11Z
+- Actor / role: Hermes implementer; Codex CLI independent read-only reviewer
+- WORK-ID: WORK-0007
+- Phase / gate: IMPLEMENT / TEST / TAGTEAM_VERIFY / HANDOFF
+- Status: PASS for local tests and isolated real-data pending cycle; BLOCKED for independent executable full-cycle verification and production release
+- Intent / decision context: Complete clean-room 3×3 and ten-ticket tracking while preserving original source and ledger. ADR-0009 controls this implementation; earlier tail allocation remains historical only.
+- Authorized scope / approval: Isolated PlinkoPBMachine source/tests/docs, read-only canonical source and copied reference tracker; no production integration or purchases.
+- Baseline: 0e1ba03; journal prewrite SHA256 58faf7e73d5f06836edfc190eed7e8f9996857764af11bf46dc678dc31bc2e07; immutable backup backups/journal/Master_Build_Journal.md.bak.20261030T051811Z; source DB SHA256 a37f94f296c4b13e026879412b1fa340e1a7454c8ef74a6f32b53e22d127ab5d.
+- Action: Implemented complete 346 bins/rankings, unbiased exact-sum DP generator, nine overlap-checked assignments and independent control, read-only snapshot refresh, isolated existing-ledger adapter and PB metrics. Tests reproduced simulated prospective results. First independent reviewer FAIL found backdating and false snapshot provenance; remediated with real-clock recording and snapshot dataset recomputation; rejected duplicate complete target cycles from draw denominators.
+- Targets / side effects: plinko/analysis.py, engine.py, refresh.py, tracking.py, tests and tzdata lock; local .cache snapshots and ledger only; no reference writes. User-authored Instruction.md not changed by this work.
+- Evidence: WORK_0007_VERIFICATION.md; reviewer logs C:/Users/RobMo/AppData/Local/Temp/plinko-work7-review.log and plinko-work7-followup.log; 25 pytest PASS, ruff PASS, black PASS; isolated cycle WORK-0007-20261030T051624 SQL readback 10 picks, 36 comparisons, max overlap 2, 0 evaluations. Snapshot dataset digest 8ac77adfab08a53c5e29a406b490614f96d8a47c467ba7c3122b67707ca51f6f.
+- TagTeam: Follow-up PASS for code fixes only; independent executable full-cycle verification BLOCKED (read-only sandbox denied Python/SQLite). No claim of full TagTeam PASS.
+- Outcome / deviations: Pending future official drawing 2026-10-31; no empirical PB hit rate yet. Local clock provenance is not external attestation. No scheduler/dashboard production integration. Changes not committed or pushed.
+- Next action / owner: Independent executable verifier in suitably isolated environment; human approval before production wiring; after actual official draw, evaluate local pending cycle against read-only refreshed draw history and review metrics.

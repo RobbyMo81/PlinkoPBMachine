@@ -1,657 +1,656 @@
-# AI Agent Directive: Powerball Plinko System Rebuild
+# AI Agent Implementation Directive
+## Powerball Master Plinko — PB Hit-Rate Experimental Engine
 
-**Mission:** Rebuild the existing Powerball analysis and draw-generation engine around the six-ball Master Plinko Theory while preserving the current tracking infrastructure.
+**Project:** `C:\Users\RobMo\PlinkoPBMachine`
 
-**Execution methodology:** Clean Room Development  
-**Verification methodology:** TagTeam Independent Review  
-**Primary constraint:** Preserve existing production data, tracking history, and operational functionality.
+**Mission:** Rebuild the existing Powerball generation and analysis engine around the approved Master Plinko Theory, prioritizing the measurement of Powerball (PB) hit rates.
 
----
+**Engineering methodology:** Clean Room Development  
+**Verification methodology:** Independent TagTeam Review  
+**Application memory:** `Master_Build_Journal.md`  
+**Governing policy:** `Clean_Room_Policy.md`
 
-## 1. Objective
-
-Replace the existing draw-generation methodology with the Master Plinko Theory established below.
-
-The rebuilt system must:
-
-- Analyze historical Powerball draws using all six balls.
-- Establish a master frequency distribution based on total draw sums.
-- Decompose each sum bin into Powerball frequency rankings.
-- Analyze the associated white-ball frequencies without imposing unsupported patterns.
-- Generate nine experimental draws and one independent random control.
-- Continue using the existing system's tracking and evaluation methodology.
-- Dynamically recalculate distributions as new historical draws are ingested.
-
-**Do not introduce additional prediction theories, player-behavior models, jackpot-sharing assumptions, or alternative optimization strategies.**
-
-The objective is to implement and evaluate the defined theory, not to reinterpret it.
+**Status:** Implementation authorized within the Clean Room. Production changes require separate human approval.
 
 ---
 
-# Phase 1A — Mandatory Clean Room Engineering Procedures
+# 1. Primary Objective
 
-**Scope:** All source code, scripts, architectural designs, CLI commands, dependencies, configurations, tests, and generated artifacts.
+Build a continuously updating, data-driven Powerball experiment that:
 
-**Enforcement:** No implementation, execution, modification, or deployment may occur outside the approved Clean Room workflow.
+1. Calculates the Master Plinko distribution using the sum of all six balls.
+2. Ranks Total Sum Values by observed frequency and recency.
+3. Selects the Top 3 ranked Master Sum Values.
+4. Calculates nested PB frequency rankings within each selected sum.
+5. Selects the Top 3 ranked PBs per selected sum.
+6. Constructs nine experimental tickets from those nine Sum/PB pairs.
+7. Applies the WB Chaos Theory without inventing unsupported predictive rules.
+8. Limits white-ball overlap between experimental tickets.
+9. Generates one independent random control ticket.
+10. Measures the PB hit rate of the experimental portfolio against actual future draws.
 
-## 1. Clean Room Operating Principle
+**Primary measurement: PB Hit Rate.**
 
-All development must follow:
+Secondary measurements may include white-ball matches, prize outcomes, distribution movement, and ranking stability, using the existing tracking infrastructure.
 
-**Discover → Isolate → Baseline → Design → Implement → Test → TagTeam Verify → Approve → Integrate → Audit**
-
-The production application is the protected reference system. The Clean Room is the only authorized environment for experimental development and execution.
-
-All changes must be traceable, reversible, and limited to the approved modification scope.
-
-## 2. Source Code Isolation
-
-Before changing source code:
-
-1. Identify the source file, its purpose, and its dependencies.
-2. Map its upstream callers and downstream consumers.
-3. Record the original file hash and repository commit.
-4. Create an isolated working copy or development worktree.
-5. Establish baseline tests for affected functionality.
-6. Document the intended modification and expected behavior.
-
-During implementation:
-
-- Modify only approved files.
-- Preserve public interfaces unless explicitly authorized.
-- Avoid unrelated refactoring.
-- Do not modify production source code.
-- Do not introduce undocumented dependencies.
-- Do not change existing data schemas without migration and compatibility analysis.
-- Maintain a change manifest identifying every modified file.
-
-After implementation, perform regression tests and independent TagTeam verification.
-
-**Required evidence:** Source diff, file hashes, dependency impact, test results, and verification status.
-
-## 3. Script Isolation
-
-This applies to Python, Bash, PowerShell, JavaScript, Rust utilities, batch files, SQL scripts, and all other executable automation.
-
-Every script must be classified before execution:
-
-| Classification | Execution policy |
-|---|---|
-| Read-only inspection | Allowed after scope verification |
-| Local analysis | Clean Room only |
-| File modification | Isolated workspace only |
-| Database modification | Disposable test database only |
-| Network/API operations | Explicitly approved test endpoints |
-| Production operations | Prohibited without human authorization |
-
-Additional requirements:
-
-- Inspect script behavior before execution.
-- Identify filesystem writes, subprocess calls, environment-variable use, and network operations.
-- Remove embedded credentials and production connection strings.
-- Use least-privilege execution.
-- Establish execution timeouts and resource limits.
-- Capture exit codes, stdout, stderr, and modified artifacts.
-- Verify file and database state after execution.
-
-Never execute unreviewed scripts against the operational application.
-
-## 4. Architectural and Design Isolation
-
-All architectural changes must begin as proposals, not implementation.
-
-### Required procedure
-
-1. Document the existing architecture.
-2. Identify the precise design problem.
-3. Map affected layers, connections, and dependency graphs.
-4. Propose the minimum viable architectural change.
-5. Analyze compatibility, data integrity, and failure scenarios.
-6. Identify rollback requirements.
-7. Submit the design to TagTeam for independent review.
-
-Required artifacts:
-
-- `ARCHITECTURE_BASELINE.md`
-- `DESIGN_CHANGE_PROPOSAL.md`
-- `DEPENDENCY_IMPACT_GRAPH.md`
-- `DESIGN_VERIFICATION.md`
-
-**Design guardrails:**
-
-- Preserve existing tracking interfaces.
-- Prevent experimental components from modifying production datasets.
-- Prefer isolated modules over invasive changes.
-- Do not replace working subsystems without demonstrated necessity.
-- Keep historical data immutable.
-- Preserve clear ownership of data ingestion, analysis, generation, and tracking.
-
-TagTeam must verify the design before implementation begins.
-
-## 5. CLI Capability Isolation
-
-**The CLI is an execution capability, not an unrestricted authority.**
-
-All CLI operations must follow an explicit permission model.
-
-### CLI access levels
-
-| Level | Capability | Authorization |
-|---|---|---|
-| L0 | Read-only discovery | Permitted within approved scope |
-| L1 | Clean Room file creation and modification | Permitted after baseline |
-| L2 | Dependency installation and local builds | Permitted in isolated environment |
-| L3 | Isolated script and test execution | Permitted with logging |
-| L4 | Integration environment modification | Requires TagTeam approval |
-| L5 | Production modification or execution | Requires explicit human approval |
-
-### Mandatory CLI preflight
-
-Before every state-changing CLI operation, establish:
-
-- Current working directory.
-- Target environment and repository.
-- Exact command and arguments.
-- Expected files or resources affected.
-- Required permissions.
-- Anticipated side effects.
-- Recovery or rollback procedure.
-
-### CLI execution guardrails
-
-- Never run destructive commands against production.
-- Never execute commands from an unverified working directory.
-- Never use unrestricted recursive deletion.
-- Never run remote scripts directly without inspection.
-- Never expose credentials in command output or audit logs.
-- Never modify global runtime dependencies when project-local isolation is available.
-- Never elevate privileges without explicit authorization.
-- Never use a successful exit code as the sole proof of correctness.
-
-Use dry-run modes whenever supported.
-
-State-changing commands must produce an auditable execution record.
-
-### CLI Capability Manifest
-
-Create `CLI_CAPABILITY_MANIFEST.md` containing:
-
-- Available commands and executables.
-- Runtime versions and executable paths.
-- Required environment variables, with secrets redacted.
-- Filesystem and network permissions.
-- Authorized execution scope.
-- Expected side effects.
-- Prohibited operations.
-- Capability dependencies and limitations.
-
-The agent must not assume a tool or CLI capability exists without discovering and verifying it.
-
-## 6. Dependency and Runtime Isolation
-
-- Use project-specific virtual environments for Python.
-- Respect the repository's declared package manager and lockfile.
-- Use isolated build outputs for compiled components.
-- Pin dependency versions where applicable.
-- Verify runtime and compiler compatibility.
-- Avoid global installations unless explicitly authorized.
-- Record dependency changes and security findings.
-- Confirm that development dependencies cannot overwrite production dependencies.
-
-Where containers are used, mount production resources read-only or do not mount them at all.
-
-External services must use test credentials and isolated endpoints.
-
-## 7. Database and Historical Data Protection
-
-The Powerball historical dataset is authoritative.
-
-Requirements:
-
-1. Preserve original historical records.
-2. Use immutable snapshots inside the Clean Room.
-3. Verify dataset hashes before and after testing.
-4. Perform calculations against isolated copies.
-5. Validate ingestion against duplicate records and incorrect draw dates.
-6. Never overwrite historical experiment results.
-7. Store the exact dataset version used for every generated portfolio.
-8. Test migrations against disposable databases.
-9. Verify that rollback restores the previous application state without losing recorded observations.
-
-New calculations must not silently modify historical source data.
-
-## 8. TagTeam Verification Protocol
-
-TagTeam must act independently of the implementation agent.
-
-For every major change, the primary agent submits:
-
-- The proposed or completed change.
-- Affected files and dependencies.
-- Test evidence.
-- Known risks.
-- Expected behavior.
-- Rollback information.
-
-TagTeam independently evaluates:
-
-1. Scope compliance.
-2. Mathematical correctness.
-3. Source-code correctness.
-4. Script side effects.
-5. Architectural compatibility.
-6. CLI execution safety.
-7. Data integrity.
-8. Test completeness.
-9. Regression impact.
-10. Audit completeness.
-
-TagTeam must reproduce critical results rather than merely accept the primary agent's test report.
-
-**Any FAIL or BLOCKED finding prevents promotion to the next stage.**
-
-The implementing agent may correct findings, but the verifier must independently confirm remediation.
-
-If the existing TagTeam framework is unavailable, report `VERIFICATION_BLOCKED`; do not substitute self-certification.
-
-## 9. Mandatory Audit Record
-
-Create `CLEAN_ROOM_AUDIT.md`.
-
-For every state-changing operation, record:
-
-- Timestamp.
-- Agent identity and role.
-- Task identifier.
-- Environment.
-- Target files or resources.
-- Command or modification performed.
-- Before/after hashes where applicable.
-- Test results.
-- TagTeam verification reference.
-- Approval status.
-- Rollback reference.
-
-Maintain append-only records where practical, and prohibit silent modifications to prior audit entries.
-
-## 10. Release Gate
-
-No Clean Room artifact may enter the operational system until:
-
-- [ ] The change is within approved scope.
-- [ ] Baseline behavior is documented.
-- [ ] Dependencies are identified.
-- [ ] Source and script modifications are reviewed.
-- [ ] CLI operations are auditable.
-- [ ] Architectural compatibility is verified.
-- [ ] All required tests pass.
-- [ ] Historical data integrity is confirmed.
-- [ ] TagTeam independently approves the change.
-- [ ] Rollback procedures are validated.
-- [ ] Explicit human authorization for production integration is recorded.
-
-**Final Enforcement Rule**
-
-No agent may bypass the Clean Room by changing tools, switching shells, spawning subprocesses, delegating execution, or using an alternate runtime.
-
-The same restrictions apply to subagents, automated scripts, CI/CD pipelines, and external execution tools.
-
-A violation must halt affected operations, preserve evidence, and initiate a scope-limited recovery procedure.
-
-**A successful implementation is not considered complete until its correctness, isolation, reproducibility, and auditability are independently verified.**
+The objective is to measure the theory's performance, not assume that historical frequencies predict future outcomes.
 
 ---
 
-## 2. Phase 0 — Mandatory System Investigation
+# 2. Mandatory Phase 0 — Investigate Before Implementing
 
-Before writing or modifying application code:
+Perform read-only investigation of the current application.
 
-1. Discover the existing application architecture, entry points, dependencies, databases, configuration, and execution workflows.
-2. Identify all subsystems responsible for:
-   - Historical draw ingestion and validation.
-   - Sum and frequency calculations.
-   - Powerball and white-ball analysis.
-   - Draw generation.
-   - Experimental tracking and performance evaluation.
-   - Reporting, dashboards, scheduling, and persistence.
-3. Map component dependencies and data flows.
-4. Identify which existing components can be reused without modification.
-5. Establish a baseline of current functionality and test results.
-6. Identify the minimum necessary changes.
+Discover and document:
 
-Produce:
+- Existing draw ingestion and validation.
+- Historical data storage and schemas.
+- Sum calculations and frequency-ranking implementations.
+- PB and white-ball analysis modules.
+- Existing ticket generator and control logic.
+- Experimental tracking and reporting.
+- Dashboard, scheduled tasks, and CLI entry points.
+- Existing TagTeam verification infrastructure.
+- Dependency graph and data flow.
+
+Identify components requiring modification and components that must remain untouched.
+
+Run baseline tests where they can execute without altering production state.
+
+**Do not assume that an existing function, script, or capability works merely because it exists. Verify its behavior.**
+
+Required investigation deliverables:
 
 - `INVESTIGATION_REPORT.md`
 - `DEPENDENCY_GRAPH.md`
 - `IMPLEMENTATION_PLAN.md`
 
-**Guardrail:** Investigation must be read-only. No production changes are authorized during this phase.
+Record findings and decisions in `Master_Build_Journal.md`.
 
-### TagTeam Verification Gate 0
+### Gate 0 — TagTeam
 
-Assign an independent verification agent to challenge the investigation findings.
-
-TagTeam must verify architectural claims against source code, confirm dependencies, identify omitted connections, and approve the proposed modification boundaries.
-
-Do not proceed until discrepancies are resolved.
-
-Use the repository's existing TagTeam mechanism if available. If unavailable, report the missing capability rather than falsely claiming verification.
+Independent TagTeam verification must confirm the investigation, dependency boundaries, and proposed change scope before implementation.
 
 ---
 
-## 3. Phase 1 — Clean Room Environment
+# 3. Mandatory Clean Room Procedures
 
-Create an isolated development environment.
+All code, scripts, design changes, CLI operations, dependency installations, and test execution must comply with `Clean_Room_Policy.md`.
 
-Requirements:
+## 3.1 Source Code
 
-- Do not directly modify the production application during development.
-- Preserve the existing source code and configuration.
-- Use isolated dependencies and test databases.
-- Use snapshots or copies of historical datasets.
-- Prevent experimental execution from placing live lottery orders or changing production tracking records.
-- Maintain reproducible builds, deterministic test fixtures, and an audit trail.
-- Record the original application version and commit identifier.
+- Create an isolated worktree or working copy.
+- Record baseline commit IDs and source hashes.
+- Modify only approved components.
+- Keep production source untouched during development.
+- Use incremental changes with testable boundaries.
+- Preserve existing public interfaces unless an approved change requires otherwise.
+- Do not perform unrelated refactoring.
 
-The clean room must provide sufficient isolation to conduct development, integration testing, and independent verification without impacting the operational system.
+## 3.2 Scripts
 
-**Exit condition:** A verified baseline exists and the clean room is demonstrably isolated from production.
+Before executing a script:
+
+1. Inspect its source and intended behavior.
+2. Identify filesystem, database, network, and subprocess side effects.
+3. Confirm it targets the isolated workspace.
+4. Verify required dependencies and environment variables.
+5. Execute with least-privilege permissions.
+6. Capture exit codes, errors, and affected artifacts.
+7. Verify the resulting application and data state.
+
+Unreviewed or destructive scripts must not execute against production.
+
+## 3.3 Architectural Design
+
+Before implementation, document affected layers, their connections, downstream consumers, and recovery implications.
+
+Preserve the existing tracking infrastructure wherever compatible.
+
+Do not replace a working subsystem merely to simplify implementation.
+
+## 3.4 CLI Execution
+
+Use verified CLI capabilities only.
+
+Before state-changing commands, confirm:
+
+- Working directory.
+- Target environment.
+- Exact command.
+- Expected side effects.
+- Permissions.
+- Rollback or recovery path.
+
+Do not execute unrestricted deletion, global dependency changes, production database modifications, or privileged commands without appropriate approval.
+
+Subagents and TagTeam reviewers are subject to the same controls.
+
+## 3.5 Historical Data
+
+- Use isolated copies of historical datasets.
+- Preserve original draw records.
+- Record source versions and checksums.
+- Validate new draw ingestion.
+- Detect duplicate or inconsistent draw records.
+- Never silently rewrite past observations.
+- Recalculate current rankings when new records arrive.
+- Preserve historical snapshots of previously generated portfolios.
+
+**Clean Room completion is a prerequisite for production integration, not permission to deploy.**
 
 ---
 
-## 4. Phase 2 — Implement Master Plinko Theory
+# 4. Implement Master Plinko Distribution
 
-### Step 1 — Master Plinko Distribution
+## 4.1 Six-Ball Sum
 
-For every historical draw, calculate:
+For each historical draw calculate:
 
-`Total Sum = WB1 + WB2 + WB3 + WB4 + WB5 + PB`
+`TOTAL_SUM = WB1 + WB2 + WB3 + WB4 + WB5 + PB`
 
-Group draws into bins by their exact Total Sum Value.
+The PB must be included.
 
-Count the occurrence frequency of every sum bin and visualize the resulting distribution as the Master Plinko bell curve.
+Do not revert to a five-white-ball-only sum.
 
-Preserve each original draw record.
+## 4.2 Frequency Distribution
 
-### Step 2 — Sum Frequency Analysis
+Group historical draws by exact `TOTAL_SUM`.
 
-For every sum bin:
+Calculate:
 
-- Record its Total Sum Value.
-- Calculate its observed frequency.
-- Determine its position within the master distribution.
-- Identify the highest-frequency sum.
-- Identify the lowest-frequency qualifying sum on each side of the distribution.
+`SUM_FREQUENCY(S) = number of historical draws with TOTAL_SUM = S`
 
-Do not substitute the sum of five white balls for the six-ball Total Sum Value.
+Retain every mathematically possible sum bin, including bins with zero observed occurrences.
 
-Handle tied frequencies explicitly and deterministically. Record tie-resolution rules without deleting equally ranked sums from the underlying dataset.
+Visualize the complete distribution using:
 
-### Step 3 — Nested PB Frequency Distribution
+- X-axis: Six-ball Total Sum Value.
+- Y-axis: Historical occurrence frequency.
 
-For each Total Sum Value bin:
+The observed distribution defines the Master Plinko curve.
 
-1. Retrieve every historical draw within that bin.
-2. Identify its associated PB number.
+### Mathematical invariants
+
+For the current Powerball format:
+
+- Five distinct white balls from 1–69.
+- One PB from 1–26.
+- Minimum Total Sum: 16.
+- Maximum Total Sum: 361.
+
+Validate these bounds against the applicable historical game rules before combining records from different Powerball formats.
+
+The sum of all bin frequencies must equal the number of accepted historical draws.
+
+---
+
+# 5. Master Plinko Top 10 Rankings
+
+Rank observed Total Sum Values using:
+
+**Primary criterion:** Historical frequency, descending.
+
+**Secondary criterion:** Most recent official draw date associated with the sum, descending.
+
+Retain the Top 10 ranked sums.
+
+Zero-frequency bins remain in the Master Plinko distribution but are not treated as observed ranking candidates.
+
+When frequencies tie, the more recently occurring sum takes precedence.
+
+The timestamp used for recency must be the official drawing date, not the ingestion date.
+
+If frequency and official draw date both tie, retain an explicit unresolved tie and use only an approved deterministic resolution rule. Do not invent a meaningful ranking difference.
+
+Every ranking must preserve:
+
+- Total Sum Value.
+- Observed frequency.
+- Last observed draw date.
+- Current rank.
+- Dataset version.
+
+Recalculate rankings whenever new verified historical data is ingested.
+
+**The Top 10 is a dynamic ranking, not a permanent filter on historical data.**
+
+---
+
+# 6. Select the Top 3 Master Sum Values
+
+From the Master Plinko Top 10 ranking, select ranks 1, 2, and 3.
+
+Each selected sum contributes three experimental tickets.
+
+This establishes:
+
+- Master Sum Rank 1 → Tickets 1–3.
+- Master Sum Rank 2 → Tickets 4–6.
+- Master Sum Rank 3 → Tickets 7–9.
+
+**Do not use the previous left-tail, center-peak, or right-tail ticket allocation algorithm.**
+
+The current approved allocation is:
+
+`3 MASTER SUMS × 3 PB SELECTIONS = 9 EXPERIMENTAL TICKETS`
+
+---
+
+# 7. Nested Powerball Frequency Rankings
+
+For each of the three selected Master Sum Values:
+
+1. Retrieve every historical draw associated with that exact Total Sum Value.
+2. Extract its PB.
 3. Count occurrences of PB values 1–26.
-4. Produce a frequency distribution specific to that bin.
+4. Calculate the PB frequency distribution.
+5. Rank PBs by descending observed frequency.
+6. Use most recent official occurrence as the secondary ranking criterion.
+7. Maintain the complete PB frequency distribution and Top 10 PB ranking.
+8. Select the Top 3 ranked PBs for ticket construction.
 
-All PB frequencies within a bin must reconcile with the total historical frequency of that bin.
+Preserve the frequency-set relationships and tie information for analysis, even when deterministic recency ranking resolves a selection boundary.
 
-### Step 4 — Dynamic Top 10 PB Ranking
+### PB frequency invariant
 
-Within each sum bin:
+For each Total Sum Value `S`:
 
-- Rank PBs by observed occurrence frequency.
-- Retain the top 10.
-- Group identical frequencies into tied sets.
-- Preserve additional PBs tied at the 10th-ranked boundary.
-- Mark additional retained boundary entries as `OUTLIER_TIE`.
-- Recalculate rankings whenever new historical records are ingested.
+`SUM(PB_FREQUENCY(S, PB=1..26)) = SUM_FREQUENCY(S)`
 
-Distinguish zero-observation PBs from observed PBs. Preserve the full frequency distribution even when only the top-ranked subset is used for generation.
+TagTeam must independently verify this invariant.
 
-Never arbitrarily discard tied PBs.
+---
 
-### Step 5 — White-Ball Chaos Theory
+# 8. Nine Experimental Ticket Assignments
 
-For each retained PB within its parent sum bin:
+Use this structure:
+
+| Ticket | Master Sum | PB Selection |
+|---|---|---|
+| 1 | Master Sum Rank 1 | PB Rank 1 |
+| 2 | Master Sum Rank 1 | PB Rank 2 |
+| 3 | Master Sum Rank 1 | PB Rank 3 |
+| 4 | Master Sum Rank 2 | PB Rank 1 |
+| 5 | Master Sum Rank 2 | PB Rank 2 |
+| 6 | Master Sum Rank 2 | PB Rank 3 |
+| 7 | Master Sum Rank 3 | PB Rank 1 |
+| 8 | Master Sum Rank 3 | PB Rank 2 |
+| 9 | Master Sum Rank 3 | PB Rank 3 |
+| 10 | Independent control | Random PB |
+
+Duplicate PB numbers across experimental tickets are permitted.
+
+For each experimental ticket, preserve its assigned Master Sum and PB.
+
+Calculate the required white-ball sum:
+
+`REQUIRED_WB_SUM = MASTER_SUM - SELECTED_PB`
+
+Every completed ticket must satisfy this relationship.
+
+---
+
+# 9. White-Ball Chaos Theory
+
+The WB Chaos Theory remains the approved observational framework.
+
+For each selected Sum/PB pair:
 
 - Retrieve associated historical five-white-ball sets.
-- Calculate individual white-ball occurrence frequencies.
-- Preserve the original five-ball combinations.
-- Record odd/even composition.
-- Permit descriptive Hot, Neutral, and Cold classifications where explicit, reproducible thresholds are defined.
-- Observe potential relationships without assuming that a meaningful pattern must exist.
+- Count individual white-ball occurrences.
+- Analyze odd/even distribution.
+- Observe Hot, Neutral, and Cold frequency characteristics where definitions exist.
+- Preserve observed five-ball combinations.
+- Examine possible relationships without requiring a pattern to exist.
 
-**Critical restriction:** Do not force the white-ball sets into a bell curve, invent correlations, or treat observed historical frequency as evidence of future predictive power.
+**Do not manufacture correlations, impose an assumed distribution, or claim that the observations establish predictive power.**
 
-Preserve both individual frequency observations and complete five-ball-set relationships.
+The final WB Chaos selection algorithm remains open for further research.
 
-### Step 6 — Draw Reconstruction
+### Interim generation policy
 
-For every reconstructed observation, retain the complete relationship:
+Ticket generation must remain operational.
 
-`Total Sum Value → PB Ranking → PB Number → Associated White-Ball Set → Original Historical Draw`
+Until a distinct WB Chaos selection algorithm is approved, use an explicitly identified **provisional, unbiased selection method** that constructs valid five-white-ball combinations satisfying the selected Sum/PB pair and the overlap constraints below.
 
-Validate:
+The provisional method must not be represented as a validated WB Chaos predictive algorithm.
 
-`WB1 + WB2 + WB3 + WB4 + WB5 + PB = Parent Total Sum Value`
+Document the sampling method, randomness source, constraints, and implementation decision in the Master Build Journal.
 
-Each historical draw must remain traceable to its original record.
+TagTeam must independently verify that the provisional method introduces no undocumented weighting or preference.
 
-Reconciliation failures must produce explicit errors rather than silent corrections.
-
----
-
-## 5. Phase 3 — Ten-Draw Experimental Engine
-
-Implement a generator that constructs exactly ten valid Powerball combinations per experimental cycle.
-
-### Experimental Draws 1–9
-
-1. Identify the highest-frequency Total Sum Value bin.
-2. Identify the least frequently occurring qualifying bin from the left tail.
-3. Identify the least frequently occurring qualifying bin from the right tail.
-4. Allocate nine experimental draws across those three bins using their observed frequencies.
-5. Select PB candidates from each bin's retained PB rankings.
-6. Construct five-white-ball sets within the White-Ball Chaos framework.
-7. Verify each generated six-ball combination satisfies its selected parent Total Sum Value.
-8. Ensure all generated six-ball combinations are distinct.
-
-The allocation method must be deterministic, auditable, and documented. Where proportional allocation is underspecified or conflicts with three-bin representation, submit the proposed rule for approval rather than silently inventing it.
-
-Generation must respect normal Powerball constraints:
-
-- Five distinct white balls, numbered 1–69.
-- One PB, numbered 1–26.
-- No duplicated complete combinations within the ten-draw portfolio.
-
-If a selected bin cannot supply a valid combination, record the constraint failure. Do not silently substitute another bin or alter the requested sum.
-
-### Experimental Draw 10 — Random Control
-
-Generate an independent random control:
-
-- Five unique white balls uniformly sampled without replacement from 1–69.
-- One PB uniformly sampled from 1–26.
-- No Plinko frequency selection.
-- No PB ranking influence.
-- No Hot/Cold filtering.
-- No sum targeting.
-
-Record the control distinctly as `CONTROL_RANDOM`.
-
-The control must remain methodologically separate from the experimental generator. Use independent random generation and an appropriate source of randomness.
+If the application already has a compatible, approved white-ball generator, investigate whether it can serve as the provisional mechanism before building a replacement.
 
 ---
 
-## 6. Phase 4 — Preserve Existing Tracking
+## Amendment — Complete WB Chaos Integration in Current Build Cycle
 
-**Reuse the existing system's tracking methodology. Do not replace it.**
+**Priority:** Mandatory  
+**Implementation cycle:** Current  
+**Status:** Approved for Clean Room development
 
-Integrate the new generator with existing tracking interfaces, historical results, reports, and performance evaluation.
+The agent must implement the WB Chaos observation engine and provisional white-ball generator during the current build cycle.
 
-Requirements:
+### Requirements
 
-- Preserve all previous observations and experimental records.
-- Maintain existing identifiers and historical attribution.
-- Store the generated ten-draw portfolio before its corresponding real-world drawing.
-- Track experimental draws and the random control separately.
-- Preserve generation timestamps and the dataset version used.
-- Prevent future draw results from influencing previously generated combinations.
-- Reuse existing reporting and evaluation metrics.
-- Maintain backward compatibility with existing tracking consumers.
+1. Analyze historical white-ball frequencies associated with each selected Master Sum/PB pair.
+2. Preserve Hot, Neutral, Cold, Odd, and Even observations without imposing unsupported predictive patterns.
+3. Generate valid five-white-ball combinations satisfying the assigned Total Sum Value minus the selected PB.
+4. Enforce the maximum two-white-ball overlap restriction across experimental Tickets 1–9.
+5. Preserve duplicate PB selections when produced by the rankings.
+6. Generate Ticket 10 independently as the random control.
+7. Integrate all ten tickets with the existing tracking system.
+8. Record PB hit rates separately for experimental tickets and the control.
 
-Do not change the scoring or outcome-evaluation methodology unless a verified compatibility defect makes a narrowly scoped correction necessary.
+### Clean Room and TagTeam Requirements
 
-New data ingestion must trigger recalculation of the Plinko distributions and rankings without rewriting prior experimental snapshots.
+- Implement and test the generator in the isolated Clean Room.
+- Verify mathematical constraints and ticket validity.
+- Independently reproduce results through TagTeam.
+- Document the provisional white-ball selection procedure.
+- Record all decisions, code modifications, tests, and verification results in `Master_Build_Journal.md`.
 
----
+### Completion Gate
 
-## 7. Phase 5 — TagTeam Independent Verification
+The current build cycle is **not complete** until the system can generate ten tickets, enforce all approved constraints, and track their PB hit rates.
 
-Use TagTeam as an independent verification mechanism at every major implementation boundary.
+Do not defer generator integration to a future cycle.
 
-### Primary Implementation Agent
+Do not represent the provisional white-ball generator as a validated predictive model.
 
-Responsible for:
-
-- Investigation and implementation.
-- Unit and integration tests.
-- Technical documentation.
-- Remediation of verified defects.
-
-### TagTeam Verification Agent
-
-Responsible for:
-
-- Independently reviewing implementation against the theory specification.
-- Recomputing representative frequency results directly from source data.
-- Verifying nested frequency reconciliation.
-- Testing tie and outlier handling.
-- Verifying white-ball combination integrity.
-- Checking all ten generated draws for correctness.
-- Confirming control independence.
-- Verifying tracking preservation and data isolation.
-- Identifying regression risks and undocumented deviations.
-
-The verification agent must not merely repeat the implementing agent's conclusions.
-
-### Required Mathematical Invariants
-
-For every Total Sum Value `S`:
-
-`Sum of all 26 PB occurrence counts within S = Historical frequency of S`
-
-For every PB `P` within `S`:
-
-`Sum of associated individual WB occurrence counts = 5 × Occurrence count of (S, P)`
-
-For every reconstructed or generated draw:
-
-`Sum(WB1...WB5) + PB = S`
-
-For each experimental cycle:
-
-`9 Experimental Draws + 1 Random Control = 10 Valid Draws`
-
-TagTeam must also verify that the experiment uses only historical data available at the generation cutoff.
-
-**Verification status must be evidence-based: PASS, FAIL, or BLOCKED.**
-
-A failed or blocked verification gate prohibits production deployment.
+Production deployment remains subject to separate human approval.
 
 ---
 
-## 8. Phase 6 — Clean Room Testing
+# 10. Mandatory White-Ball Overlap Restriction
 
-Complete the following before considering deployment:
+**Applies exclusively to experimental Tickets 1–9.**
 
-1. Unit tests for every mathematical transformation.
-2. Independent frequency-reconciliation tests.
-3. Boundary tests for minimum and maximum possible sums.
-4. Tie-handling and `OUTLIER_TIE` tests.
-5. Tests for empty or sparsely populated sum bins.
-6. Repeated-ingestion and idempotency tests.
-7. Draw-construction validity tests.
-8. Control independence tests.
-9. Regression tests for existing tracking.
-10. End-to-end tests using isolated historical datasets.
-11. Reproducibility tests using recorded dataset versions and deterministic test seeds.
-12. Leakage tests confirming that future draws cannot influence earlier portfolio construction.
+Each experimental ticket must contain five distinct white balls.
 
-Use independent expected results, exact calculations, or reference fixtures. Do not validate the implementation solely by comparing it against its own outputs.
+For any two experimental tickets, a maximum of two white-ball numbers may appear in both sets.
 
-Report test coverage, failures, and unresolved assumptions.
+Formally:
+
+`COUNT(INTERSECTION(WB_SET_A, WB_SET_B)) <= 2`
+
+The system must verify all 36 unique pairwise comparisons among the nine experimental tickets.
+
+Examples:
+
+- Zero shared white balls: PASS.
+- One shared white ball: PASS.
+- Two shared white balls: PASS.
+- Three shared white balls: FAIL.
+- Four shared white balls: FAIL.
+- Five shared white balls: FAIL.
+
+### Powerball duplicates
+
+PB duplication is allowed when separate ranked selections identify the same PB number.
+
+The overlap restriction applies to white-ball values only.
+
+### Constraint resolution
+
+Use a bounded, auditable construction procedure that searches for valid sets without modifying assigned Master Sum/PB pairs.
+
+The generator must detect unsatisfiable constraints and report structured errors.
+
+Do not silently change selected sums, PB rankings, overlap limits, or historical observations to force success.
+
+The search procedure, retry limit, and failure response must be documented and verified.
 
 ---
 
-## 9. Phase 7 — Controlled Integration
+# 11. Ticket 10 — Independent Random Control
 
-After clean room development and TagTeam verification:
+Generate an independent random Powerball ticket:
 
-1. Compare the rebuilt engine against the existing system interfaces.
-2. Identify the exact files, components, and configurations requiring changes.
-3. Confirm production data and tracking history remain unchanged.
-4. Prepare a rollback procedure.
-5. Obtain explicit human approval before applying production changes.
-6. Deploy only the verified components.
-7. Execute post-deployment smoke tests.
-8. Confirm normal tracking resumes without historical data loss.
+- Five distinct white balls uniformly selected from 1–69.
+- One PB uniformly selected from 1–26.
+- No Master Plinko sum targeting.
+- No PB frequency ranking influence.
+- No WB Chaos selection influence.
 
-**No unrelated refactoring, dependency upgrades, architecture replacement, or cosmetic changes are authorized.**
+Ticket 10 is exempt from the two-white-ball overlap rule.
+
+Do not modify the control to match experimental constraints.
+
+If the control duplicates an experimental ticket, preserve and record the collision instead of silently regenerating it.
+
+The control is a baseline for longitudinal comparison.
 
 ---
 
-## 10. Audit Trail and Required Deliverables
+# 12. Primary Experimental Metric — PB Hit Rate
 
-Maintain a complete record of the investigation, implementation, verification, and deployment process.
+The central purpose of the rebuilt system is to observe the PB hit rate.
 
-Required artifacts:
+For each actual future Powerball drawing:
 
-- `INVESTIGATION_REPORT.md`
-- `DEPENDENCY_GRAPH.md`
-- `IMPLEMENTATION_PLAN.md`
-- `PLINKO_THEORY_SPEC.md`
-- `CLEAN_ROOM_TEST_REPORT.md`
-- `TAGTEAM_VERIFICATION_REPORT.md`
-- `CHANGE_AUDIT.md`
-- `ROLLBACK_PLAN.md`
+1. Retrieve the nine experimental PB selections stored before that drawing.
+2. Retrieve the independently selected control PB.
+3. Compare each selected PB against the official drawn PB.
+4. Record ticket-level matches.
+5. Record whether at least one experimental ticket matched the PB.
+6. Record the number of distinct PB values covered.
+7. Compare the experimental group against the control.
+8. Append the results to the existing tracking infrastructure.
 
-The change audit must identify:
+### Required measurements
 
-- Files created and modified.
-- Reason for each modification.
-- Relevant component dependencies.
-- Tests executed and results.
-- Verification findings and remediation.
-- Remaining limitations.
-- Final deployment status.
+**Experimental PB coverage hit rate**
 
-## 11. Completion Criteria
+`DRAW_HIT_RATE = Draws with >=1 experimental PB match / Total evaluated draws`
 
-The project is complete only when:
+**Ticket-level PB hit rate**
 
-- [ ] The six-ball Master Plinko distribution is implemented correctly.
-- [ ] Sum frequencies are accurately calculated.
-- [ ] Nested PB frequencies reconcile with the historical dataset.
-- [ ] Dynamic Top 10 PB rankings and tied outliers work correctly.
-- [ ] WB Chaos observations preserve the original data relationships.
-- [ ] Draw reconstruction passes all mathematical invariants.
-- [ ] Nine experimental draws satisfy the approved three-bin allocation.
-- [ ] One independent random control is generated.
-- [ ] Existing tracking continues without loss of historical records.
-- [ ] New ingestion updates rankings without altering past experiment snapshots.
-- [ ] Clean Room tests pass.
-- [ ] TagTeam independently verifies the implementation.
-- [ ] The audit trail and rollback procedure are complete.
-- [ ] Human approval is obtained before production deployment.
+`TICKET_PB_HIT_RATE = Total matching experimental ticket PBs / Total experimental ticket opportunities`
 
-**Final Directive**
+**Control PB hit rate**
 
-Investigate first. Preserve the current operational system. Build the new Plinko engine in a clean room. Verify each layer independently using TagTeam. Do not invent missing theoretical rules or expand the project's scope.
+`CONTROL_PB_HIT_RATE = Control PB matches / Total evaluated draws`
 
-The Master Plinko Theory is the implementation specification. Historical draw data is the source of truth. All conclusions must be reproducible from the data.
+Track these as separate metrics.
 
-**Do not declare the work complete until implementation, independent verification, tracking compatibility, and audit requirements are satisfied.**
+Nine PB selections may contain duplicates. Do not confuse nine assignments with nine distinct PB values.
+
+Also calculate and report the theoretical random PB-coverage baseline based on the number of unique experimental PB selections.
+
+The system must not confuse a PB match with a paid prize. Prize outcomes require separate official prize-tier evaluation.
+
+### Historical integrity
+
+Every portfolio must be generated and recorded before the drawing against which it is evaluated.
+
+Do not use future outcomes to construct historical predictions.
+
+Retrospective analysis must be distinguished from prospective experimental results.
+
+---
+
+# 13. Preserve Existing Tracking and Reporting
+
+Reuse the current application's tracking system.
+
+Maintain:
+
+- Existing experiment records.
+- Historical draw results.
+- Performance measurements.
+- Existing reporting formats where compatible.
+- Dashboard functionality.
+- Data-ingestion schedules.
+- Historical attribution.
+
+Extend tracking only where required to record the new Master Plinko configuration.
+
+Every experimental cycle must record:
+
+- Cycle identifier.
+- Target drawing date.
+- Generation timestamp.
+- Dataset version.
+- Master Top 10 Sum rankings.
+- Selected Top 3 Sum Values.
+- Nested PB rankings.
+- Nine experimental Sum/PB assignments.
+- Generated white-ball sets.
+- Pairwise overlap verification.
+- Independent control ticket.
+- Actual draw result.
+- PB hit-rate measurements.
+- TagTeam verification status.
+
+Previously generated portfolios must remain immutable.
+
+---
+
+# 14. Independent TagTeam Verification
+
+TagTeam must independently verify each layer.
+
+### Verification targets
+
+**Master Plinko**
+- Correct six-ball sum calculations.
+- Complete sum frequency distribution.
+- Correct total record reconciliation.
+
+**Master rankings**
+- Frequency-first ordering.
+- Recency tie-breaking.
+- Correct Top 10 and Top 3 selection.
+
+**PB analysis**
+- Correct nested PB counts.
+- Ranking accuracy.
+- Correct selection of three PBs per Master Sum.
+
+**WB Chaos**
+- Correct source records and frequencies.
+- No unsupported predictive assertions.
+- Valid constructed white-ball combinations.
+
+**Experimental tickets**
+- Exactly nine Sum/PB assignments.
+- Correct sum reconciliation.
+- Valid Powerball numbers.
+- Maximum two shared white balls between any two experimental tickets.
+- Permitted duplicate PBs.
+
+**Control**
+- Independent generation.
+- No application of experimental filters.
+
+**Tracking**
+- Correct PB hit-rate calculations.
+- No historical data loss.
+- No future-data leakage.
+- Correct separation of experimental and control performance.
+
+A verification failure must be recorded and resolved before integration.
+
+---
+
+# 15. Master Build Journal — Mandatory Agent Memory
+
+`Master_Build_Journal.md` is the single authoritative document for the application's engineering memory.
+
+All participating agents must consult it before beginning work and update it at required workflow boundaries.
+
+Record:
+
+1. Current application state.
+2. Approved theory and selection rules.
+3. Investigation findings.
+4. Architecture and dependency decisions.
+5. Implementation plans.
+6. Source modifications.
+7. Script and CLI execution.
+8. Tests and results.
+9. TagTeam findings.
+10. Defects and remediation.
+11. Unresolved decisions.
+12. Human approvals.
+13. Integration and rollback outcomes.
+
+Use unique entry identifiers, timestamps, responsible agents, and references to supporting evidence.
+
+**Do not silently change previous decisions.**
+
+Superseded decisions must retain their history and identify the replacement decision.
+
+Keep detailed logs and generated evidence in supporting artifacts, referenced from the journal. The journal remains the authoritative index and decision record.
+
+---
+
+# 16. Implementation Acceptance Criteria
+
+The implementation must demonstrate:
+
+- [ ] Accurate six-ball Master Plinko distribution.
+- [ ] Complete preservation of all sum bins.
+- [ ] Correct frequency/recency rankings.
+- [ ] Top 3 Master Sum selection.
+- [ ] Top 3 PB selection per Master Sum.
+- [ ] Nine valid experimental Sum/PB assignments.
+- [ ] WB Chaos observation and provisional generation correctly separated.
+- [ ] No more than two shared white balls between any two experimental tickets.
+- [ ] Duplicate PB numbers accepted.
+- [ ] Independent Ticket 10 control.
+- [ ] Valid PB hit-rate tracking.
+- [ ] Historical experiment records preserved.
+- [ ] Continuous ingestion and ranking recalculation.
+- [ ] Clean Room tests completed.
+- [ ] Independent TagTeam verification completed.
+- [ ] Master Build Journal updated.
+- [ ] Production integration approved by the human operator.
+
+---
+
+# 17. Execution Instructions
+
+Proceed through the following controlled stages:
+
+**Stage 0:** Investigate existing application and current tracking system.
+
+**Stage 1:** Establish and verify Clean Room isolation.
+
+**Stage 2:** Implement and independently verify Master Plinko sum calculations and rankings.
+
+**Stage 3:** Implement nested PB frequencies and rankings.
+
+**Stage 4:** Integrate WB Chaos observations and the provisional white-ball generator.
+
+**Stage 5:** Implement the nine experimental tickets and two-white-ball overlap enforcement.
+
+**Stage 6:** Implement the independent random control.
+
+**Stage 7:** Integrate PB hit-rate measurements with existing tracking.
+
+**Stage 8:** Run independent TagTeam verification and regression testing.
+
+**Stage 9:** Prepare the deployment plan, rollback procedure, and final audit.
+
+**Stage 10:** Obtain explicit human approval before production integration.
+
+## Final Engineering Guardrails
+
+- Do not reinterpret the Master Plinko Theory.
+- Do not restore the superseded left-tail/center/right-tail generator.
+- Do not invent predictive white-ball patterns.
+- Do not claim a mathematical advantage without supporting calculations.
+- Do not silently resolve unapproved design decisions.
+- Do not modify unrelated application components.
+- Do not bypass Clean Room restrictions through scripts, CLI commands, subprocesses, or delegated agents.
+- Do not fabricate TagTeam results.
+- Do not alter historical experiments.
+- Do not replace the existing tracking methodology without approval.
+- Do not claim successful completion without verified implementation evidence.
+
+**Start with read-only discovery, verify the architecture, and then rebuild the required components in the Clean Room.**
+
+**Every engineering decision and state transition must be recorded in `Master_Build_Journal.md`.**

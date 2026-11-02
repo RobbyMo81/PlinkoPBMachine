@@ -63,6 +63,25 @@ class Ranking:
 
 
 @dataclass(frozen=True)
+class RankedSum:
+    total: int
+    frequency: int
+    last_date: date
+    rank: int
+    dataset_hash: str
+    frequency_tie: bool
+
+
+@dataclass(frozen=True)
+class RankedPB:
+    pb: int
+    count: int
+    last_date: date
+    rank: int
+    frequency_tie: bool
+
+
+@dataclass(frozen=True)
 class SumBin:
     total: int
     frequency: int
@@ -136,7 +155,8 @@ def analyze(draws: tuple[Draw, ...]) -> Analysis:
     for row in sorted_rows:
         grouped[row.total].append(row)
     bins = {}
-    for total, members in sorted(grouped.items()):
+    for total in range(16, 362):
+        members = grouped[total]
         pb_counts = Counter(row.pb for row in members)
         ranked = sorted(pb_counts.items(), key=lambda item: (-item[1], item[0]))
         boundary = ranked[9][1] if len(ranked) >= 10 else None
@@ -179,17 +199,56 @@ def analyze(draws: tuple[Draw, ...]) -> Analysis:
     )
 
 
+def rank_sums(result: Analysis, *, require: int = 0) -> tuple[RankedSum, ...]:
+    """Observed sums, ordered by frequency then latest official draw date."""
+    observed = [b for b in result.bins.values() if b.frequency]
+    observed.sort(
+        key=lambda b: (-b.frequency, -max(d.draw_date.toordinal() for d in b.observations))
+    )
+    if len(observed) < require:
+        raise ValueError("not enough observed sum bins")
+    counts = Counter(b.frequency for b in observed)
+    return tuple(
+        RankedSum(
+            b.total,
+            b.frequency,
+            max(d.draw_date for d in b.observations),
+            index,
+            result.dataset_hash,
+            counts[b.frequency] > 1,
+        )
+        for index, b in enumerate(observed[:10], 1)
+    )
+
+
+def rank_powerballs(result: Analysis, total: int, *, require: int = 0) -> tuple[RankedPB, ...]:
+    """Observed PBs in a sum bin, ordered by count and official recency."""
+    bucket = result.bins[total]
+    counts = Counter(d.pb for d in bucket.observations)
+    if len(counts) < require:
+        raise ValueError("not enough observed PBs in selected sum")
+    latest = {pb: max(d.draw_date for d in bucket.observations if d.pb == pb) for pb in counts}
+    ordered = sorted(counts, key=lambda pb: (-counts[pb], -latest[pb].toordinal()))
+    frequency_ties = Counter(counts.values())
+    return tuple(
+        RankedPB(pb, counts[pb], latest[pb], index, frequency_ties[counts[pb]] > 1)
+        for index, pb in enumerate(ordered[:10], 1)
+    )
+
+
 def render_svg(result: Analysis) -> str:
     """Render the exact six-ball sum histogram as standalone, in-memory SVG."""
     if not result.bins or any(
         type(total) is not int
         or not 16 <= total <= 361
         or type(bucket.frequency) is not int
-        or bucket.frequency < 1
+        or bucket.frequency < 0
         for total, bucket in result.bins.items()
     ):
         raise ValueError("invalid sum bin for SVG")
     maximum = max(bucket.frequency for bucket in result.bins.values())
+    if maximum == 0:
+        raise ValueError("empty distribution")
     bars = []
     for total in sorted(result.bins):
         count = result.bins[total].frequency

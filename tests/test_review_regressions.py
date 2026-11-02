@@ -56,11 +56,17 @@ def test_svg_visualizes_exact_six_ball_distribution():
     namespace = {"s": "http://www.w3.org/2000/svg"}
     assert root.find("s:title", namespace).text == "Six-ball total-sum distribution"
     bars = root.findall("s:rect", namespace)
-    assert len(bars) == 2
-    assert [bar.get("data-sum") for bar in bars] == ["16", "361"]
-    assert [bar.get("data-frequency") for bar in bars] == ["1", "1"]
-    assert [bar.get("x") for bar in bars] == ["0", "1035"]
-    assert all(bar.get("height") == "180.00" for bar in bars)
+    assert len(bars) == 346
+    assert [bar.get("data-sum") for bar in bars if bar.get("data-frequency") != "0"] == [
+        "16",
+        "361",
+    ]
+    assert [bar.get("data-frequency") for bar in bars if bar.get("data-frequency") != "0"] == [
+        "1",
+        "1",
+    ]
+    assert [bar.get("x") for bar in bars if bar.get("data-frequency") != "0"] == ["0", "1035"]
+    assert all(bar.get("height") == "180.00" for bar in bars if bar.get("data-frequency") != "0")
 
 
 def test_svg_rejects_forged_bin_keys():
