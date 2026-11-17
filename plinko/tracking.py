@@ -16,10 +16,36 @@ from zoneinfo import ZoneInfo
 
 from plinko.analysis import Analysis, analyze, load_draws, rank_powerballs, rank_sums
 from plinko.engine import Portfolio, next_draw_date
+from plinko.monte_carlo import review_portfolio, validate_source_rankings
 
 SOURCE = "plinko_3x3_v1"
-PRODUCTION_ROOT = Path("C:/Users/RobMo/OneDrive/Documents/PowerBall")
+PRODUCTION_ROOT = Path("C:/Users/RobMo/PBMachine")
+# The pre-2026-11-10 production location stays guarded: OneDrive cloud sync
+# can recreate files under it after any local deletion.
+LEGACY_PRODUCTION_ROOT = Path("C:/Users/RobMo/OneDrive/Documents/PowerBall")
 DRAW_ZONE = ZoneInfo("America/New_York")
+
+# Base-game prize schedule in cents. Jackpot is variable and not priced here.
+_PRIZES = {
+    (0, True): ("powerball_only", 400),
+    (1, True): ("match_1_powerball", 400),
+    (2, True): ("match_2_powerball", 700),
+    (3, False): ("match_3", 700),
+    (3, True): ("match_3_powerball", 10_000),
+    (4, False): ("match_4", 10_000),
+    (4, True): ("match_4_powerball", 5_000_000),
+    (5, False): ("match_5", 100_000_000),
+    (5, True): ("jackpot", None),
+}
+
+
+def score_prize(white_matches: int, powerball_match: bool) -> tuple[str, int | None]:
+    """Return the nine base-game prize levels, or no prize; never price jackpot."""
+    if type(white_matches) is not int or not 0 <= white_matches <= 5:
+        raise ValueError("white match count must be 0-5")
+    if type(powerball_match) is not bool:
+        raise ValueError("powerball match must be boolean")
+    return _PRIZES.get((white_matches, powerball_match), ("no_prize", 0))
 
 
 def _utc_now() -> datetime:
@@ -29,7 +55,10 @@ def _utc_now() -> datetime:
 def _isolated(path: Path, root: Path) -> Path:
     resolved = Path(path).resolve()
     workspace = Path(root).resolve()
-    if not resolved.is_relative_to(workspace) or resolved.is_relative_to(PRODUCTION_ROOT):
+    production_roots = (PRODUCTION_ROOT, LEGACY_PRODUCTION_ROOT)
+    if not resolved.is_relative_to(workspace) or any(
+        resolved.is_relative_to(production) for production in production_roots
+    ):
         raise ValueError("database must be within isolated workspace and outside production")
     return resolved
 
@@ -67,8 +96,12 @@ def persist_cycle(
         raise ValueError("generation timestamp must be current at persistence")
     if portfolio.target_date != next_draw_date(recorded_at):
         raise ValueError("generation timestamp is after or targets wrong draw")
-    if portfolio.dataset_hash != analyze(load_draws(database).rows).dataset_hash:
+    snapshot_analysis = analyze(load_draws(database).rows)
+    if portfolio.dataset_hash != snapshot_analysis.dataset_hash:
         raise ValueError("snapshot content does not match portfolio dataset hash")
+    if snapshot_analysis.last_date >= portfolio.generated_at.astimezone(DRAW_ZONE).date():
+        raise ValueError("snapshot contains draw on/after generation date")
+    validate_source_rankings(portfolio, snapshot_analysis)
     # Never silently reuse a partially persisted identifier.
     with closing(sqlite3.connect(ledger_path.as_uri() + "?mode=ro", uri=True)) as conn:
         if conn.execute("SELECT 1 FROM generation_batches WHERE id=?", (cycle_id,)).fetchone():
@@ -108,6 +141,7 @@ def persist_cycle(
         "overlaps_checked": portfolio.overlaps_checked,
         "control_collision": portfolio.control_collision,
         "distinct_pbs": portfolio.distinct_pbs,
+        "monte_carlo_review": review_portfolio(portfolio),
     }
     ledger.create_batch(
         source=SOURCE,
@@ -161,6 +195,9 @@ def read_pb_metrics(ledger_path: Path, *, workspace_root: Path) -> dict:
         ).fetchall()
         complete = pending = incomplete = mismatched = duplicate = 0
         coverage_hits = experimental_hits = control_hits = 0
+        experimental_prizes: Counter[str] = Counter()
+        control_prizes: Counter[str] = Counter()
+        experimental_known_base_cents = control_known_base_cents = 0
         baseline_sum = 0.0
         cycles = []
         targets = Counter()
@@ -196,7 +233,8 @@ def read_pb_metrics(ledger_path: Path, *, workspace_root: Path) -> dict:
                 continue
             outcomes = [
                 conn.execute(
-                    "SELECT draw_date,draw_timestamp,powerball_match,timing_status,input_sha256 "
+                    "SELECT draw_date,draw_timestamp,white_matches,powerball_match,"
+                    "prize_tier,base_payout_cents,timing_status,input_sha256 "
                     "FROM pick_evaluations WHERE pick_id=? AND is_current=1",
                     (p["id"],),
                 ).fetchone()
@@ -222,10 +260,23 @@ def read_pb_metrics(ledger_path: Path, *, workspace_root: Path) -> dict:
                     or recorded >= datetime.fromisoformat(o["draw_timestamp"])
                     for o in outcomes
                 )
+                or any(
+                    type(o["white_matches"]) is not int
+                    or not 0 <= o["white_matches"] <= 5
+                    or o["powerball_match"] not in (0, 1)
+                    or (o["prize_tier"], o["base_payout_cents"])
+                    != score_prize(o["white_matches"], bool(o["powerball_match"]))
+                    for o in outcomes
+                )
             ):
                 mismatched += 1
                 continue
             complete += 1
+            for outcome in outcomes[:9]:
+                experimental_prizes[outcome["prize_tier"]] += 1
+                experimental_known_base_cents += outcome["base_payout_cents"] or 0
+            control_prizes[outcomes[9]["prize_tier"]] += 1
+            control_known_base_cents += outcomes[9]["base_payout_cents"] or 0
             hits = sum(o["powerball_match"] for o in outcomes[:9])
             experimental_hits += hits
             coverage_hits += int(hits > 0)
@@ -246,4 +297,9 @@ def read_pb_metrics(ledger_path: Path, *, workspace_root: Path) -> dict:
         "experimental_ticket_rate": experimental_hits / (9 * complete) if complete else None,
         "control_rate": control_hits / complete if complete else None,
         "distinct_pb_baseline": baseline_sum / complete if complete else None,
+        "experimental_prize_tiers": dict(experimental_prizes),
+        "control_prize_tiers": dict(control_prizes),
+        "experimental_known_base_cents": experimental_known_base_cents,
+        "control_known_base_cents": control_known_base_cents,
+        "jackpot_value_known": False,
     }
