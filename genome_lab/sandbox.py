@@ -7,10 +7,12 @@ workspace), and read-only code and inputs. On a breach the attempt is
 stopped through the runtime, exit is confirmed before further work, and
 partial output is discarded.
 
-Production gap (explicit, not hidden): effective container CPU, memory, and
-process limits plus network isolation require the owner-authorized runtime
-profile exercised at preflight; this local executor enforces deadlines, the
-output cap, and process-tree termination (see DESIGN_NOTES).
+The enforcing owner-authorized runtime profile lives in genome_lab.runtime
+(docker-strict-v1: network-isolated, memory/CPU/process-capped, read-only,
+non-privileged containers) and is exercised at preflight (PF-ISO/PF-IRC).
+This local executor enforces deadlines, the output cap, and process-tree
+termination for controlled fixtures and tests; it applies no OS-level
+resource limits.
 """
 
 import os

@@ -1,8 +1,10 @@
 """Deterministic check catalog (Document 02).
 
-Twelve check IDs. The six preflight checks run as controlled fixtures without
-real genome launches; candidate checks identify the exact run, attempt, and
-artifact. Every check returns a CheckResult carrying tool-verified evidence.
+Twelve check IDs. The six preflight checks run as controlled fixtures; with
+the enforcing runtime profile (genome_lab.runtime) the isolation and
+resource-limit probes execute real containers under the pinned profile.
+Candidate checks identify the exact run, attempt, and artifact. Every check
+returns a CheckResult carrying tool-verified evidence.
 """
 
 import datetime as dt
@@ -250,9 +252,13 @@ def _pf_iso(paths, journal, registry, executor: LocalExecutor) -> CheckResult:
         "smoke_output_valid": valid,
         "smoke_returncode": smoke.returncode,
     }
-    return (
-        _pass("PF-ISO", evidence) if (stable and smoke.ok and valid) else _fail("PF-ISO", evidence)
-    )
+    ok = stable and smoke.ok and valid
+    iso_probes = getattr(executor, "profile_iso_probes", None)
+    if iso_probes is not None:
+        # Owner-authorized runtime profile: real isolation probes under PF-ISO.
+        evidence["profile_enforcement"] = iso_probes(Path(g1_path).parent)
+        ok = ok and all(probe.get("ok") for probe in evidence["profile_enforcement"].values())
+    return _pass("PF-ISO", evidence) if ok else _fail("PF-ISO", evidence)
 
 
 def _pf_irc(paths, journal, registry, executor: LocalExecutor) -> CheckResult:
@@ -325,6 +331,11 @@ def _pf_irc(paths, journal, registry, executor: LocalExecutor) -> CheckResult:
         and not ai_ok
         and cutoff_raised
     )
+    irc_probes = getattr(executor, "profile_irc_probes", None)
+    if irc_probes is not None:
+        # Owner-authorized runtime profile: measured resource limits under PF-IRC.
+        evidence["profile_enforcement"] = irc_probes()
+        ok = ok and all(probe.get("ok") for probe in evidence["profile_enforcement"].values())
     return _pass("PF-IRC", evidence) if ok else _fail("PF-IRC", evidence)
 
 

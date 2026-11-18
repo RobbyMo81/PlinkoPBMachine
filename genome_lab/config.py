@@ -55,9 +55,25 @@ CHECK_IDS = (
 )
 PREFLIGHT_CHECKS = ("PF-ISO", "PF-IRC", "PF-JRN", "PF-GATE", "PF-DNA", "PF-OUTPUT")
 
-# Runtime image identity and sandbox profile bound by owner authorization.
-RUNTIME_IMAGE = "genome-lab-local-v1"
-SANDBOX_PROFILE = "local-python-subprocess-v1"
+# Runtime image and sandbox profile bound by owner authorization.
+# The image is content-addressed by SHA-256 digest: PF-ISO verifies this
+# digest is present locally before any launch, so a retag cannot silently
+# change the runtime (the profile fingerprint in genome_lab.runtime covers
+# the exact parameters).
+_PYTHON_SLIM_SHA256 = "51dafde81dbdb6ebde285137a295cf18a47ca95234fe388a343719cb97305b3d"
+RUNTIME_IMAGE = f"python:3.14.7-slim@sha256:{_PYTHON_SLIM_SHA256}"
+SANDBOX_PROFILE = "docker-strict-v1"
+PROFILE_PARAMETERS = {
+    "network": "none",
+    "memory_mib": CONTAINER_MEMORY_MIB,
+    "memory_swap_mib": CONTAINER_MEMORY_MIB,  # swap equals memory: no bypass
+    "cpus": CONTAINER_CPU_SHARE,  # one logical CPU of compute
+    "pids_limit": CONTAINER_PROCESS_LIMIT,  # processes and threads total
+    "read_only": True,
+    "user": "65534:65534",
+    "cap_drop": "ALL",
+    "security_opt": "no-new-privileges",
+}
 
 
 class LabSetupError(RuntimeError):
